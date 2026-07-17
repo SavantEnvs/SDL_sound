@@ -1,0 +1,13 @@
+# mayhem/sdl-sound-kat.expected - known answers for mayhem/test.sh, one case per line:
+#   <file in mayhem/sdl-sound-fuzzer/testsuite> <decoder> <format> <channels> <rate> <pcm bytes> <pcm sha256>
+# <decoder> is the claiming decoder's first extension and <format> is the SDL_AudioFormat it
+# reports. Every case, lossy (OGG, MP3) included, must match the PCM length and sha256 exactly.
+# Generated from the pinned upstream baseline (icculus/SDL_sound 0221690) by running mayhem/test.sh
+# in the unpatched commit image. The mp3_mpg321_* seed is deliberately corrupt (no decoder accepts
+# it), so it is a fuzz seed only, not a case here.
+StarWars3.wav          WAV  0x8010 1 22050 132300 f3d93154ea9950e754d89884c371936889b9dcc4f39a37d764d80da5eae1dffb
+pcm_mulaw.au           AU   0x8010 1  8000  19932 91eb84dfe433d571fba5758965f7c62cb5a59ad6e792d744a4902f1bdbcf6476
+flac_r22k_1c_24b.flac  FLAC 0x8020 1 22050  44100 5eded564a266618f0091a6c1591e8272324c769d0c5821b383dc2ba1330854e3
+ogg_440hz_sine.ogg     OGG  0x8120 1 44100 882000 44c2676ea8ec11bde0c637f1eae828209bc2d8b788490f8ddd8a393adf78a2a9
+test22.mp1             MP3  0x8120 2 44100 184320 9e7258b2d262621592f3bd5979e78e2165543722512da5b3cb450a5e6bed1a64
+mp2_test30.mp2         MP3  0x8120 1 24000 124416 b998a93adba062c916aba96948003b907f875034d6e50bdd541c1b4c6f4ef492

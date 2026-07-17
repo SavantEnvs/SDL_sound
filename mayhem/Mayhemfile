@@ -1,0 +1,22 @@
+project: savantenvs/sdl-sound
+target: sdl-sound-fuzzer
+
+cmds:
+  - cmd: /mayhem/fuzz_samplefrommem
+    max_length: 200000
+    libfuzzer: true
+    # SDL's audio subsystem, probed by Sound_Init(), leaks 159 bytes in libasound at exit on a real
+    # backend; LeakSanitizer then turns every input into a crash. The harness only decodes, so a null
+    # device changes nothing it tests. test.sh runs this binary the same way.
+    env:
+      SDL_AUDIODRIVER: dummy
+
+# The owner/project half of the accumulation URI is PINNED to the Mayhem project SLUG
+# (savantenvs/sdl-sound), as on savantenvs/daw_json_link and dng_sdk. $MAYHEM_PROJECT interpolates
+# the --project of whoever creates the run. By default that is the GitHub repo name (sdl_sound, with
+# an underscore), while Mayhem stores the project as sdl-sound, and the run-creation testsuite ACL
+# check then aborts (#598). .github/workflows/mayhem.yml passes the slug today; the pin keeps the
+# URI right for any other run creator. $MAYHEM_TARGET stays literal so each target keys its own tar.
+testsuite:
+  - https://$MAYHEM_DOMAIN/savantenvs/sdl-sound/$MAYHEM_TARGET/testsuite.tar
+  - file://mayhem/sdl-sound-fuzzer/testsuite
