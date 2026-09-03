@@ -1,0 +1,11 @@
+project: savantenvs/sdl-sound-repro-buggy-mhh-run-49
+target: sdl-sound-fuzzer
+
+cmds:
+  - cmd: /mayhem/fuzz_samplefrommem
+    max_length: 200000
+    libfuzzer: true
+
+testsuite:
+  - https://$MAYHEM_DOMAIN/$MAYHEM_PROJECT/$MAYHEM_TARGET/testsuite.tar
+  - file://mayhem/sdl-sound-fuzzer/testsuite

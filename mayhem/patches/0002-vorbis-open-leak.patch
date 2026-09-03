@@ -1,0 +1,12 @@
+diff --git a/src/SDL_sound_vorbis.c b/src/SDL_sound_vorbis.c
+index e236a62..e7263b5 100644
+--- a/src/SDL_sound_vorbis.c
++++ b/src/SDL_sound_vorbis.c
+@@ -122,6 +122,7 @@ static int VORBIS_open(Sound_Sample *sample, const char *ext)
+     num_frames = stb_vorbis_stream_length_in_samples(stb);
+     if (!num_frames)
+     {
++        stb_vorbis_close(stb);  /* opened OK but unusable: free the handle before bailing */
+         BAIL_MACRO("VORBIS: No samples in ogg/vorbis stream.", 0);
+     }
+     else
