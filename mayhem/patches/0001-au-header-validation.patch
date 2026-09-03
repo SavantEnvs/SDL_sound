@@ -1,0 +1,40 @@
+diff --git a/src/SDL_sound_au.c b/src/SDL_sound_au.c
+index 087a216..a52f0b5 100644
+--- a/src/SDL_sound_au.c
++++ b/src/SDL_sound_au.c
+@@ -109,7 +109,8 @@ static int AU_open(Sound_Sample *sample, const char *ext)
+ {
+     Sound_SampleInternal *internal = sample->opaque;
+     SDL_IOStream *io = internal->io;
+-    int hsize, i, bytes_per_second;
++    int hsize, i;
++    Sint64 bytes_per_second;
+     struct au_file_hdr hdr;
+     struct audec *dec;
+     char c;
+@@ -187,12 +188,20 @@ static int AU_open(Sound_Sample *sample, const char *ext)
+         BAIL_MACRO("AU: Not an .AU stream.", 0);
+     } /* else */
+ 
+-    bytes_per_second = ( ( dec->encoding == AU_ENC_LINEAR_16 ) ? 2 : 1 )
++    /* freq/channels come straight from the (untrusted) AU header; reject the
++       degenerate values that would divide-by-zero / overflow below. */
++    if (sample->actual.freq <= 0 || sample->actual.channels <= 0)
++    {
++        SDL_free(dec);
++        BAIL_MACRO("AU: invalid freq/channels", 0);
++    } /* if */
++
++    /* compute in 64-bit so 2*freq*channels and remaining*1000 cannot overflow,
++       and guard the divide. */
++    bytes_per_second = (Sint64) ( ( dec->encoding == AU_ENC_LINEAR_16 ) ? 2 : 1 )
+         * sample->actual.freq * sample->actual.channels ;
+-    internal->total_time = ((dec->remaining == -1) ? (-1) :
+-                            ( ( dec->remaining / bytes_per_second ) * 1000 ) +
+-                            ( ( dec->remaining % bytes_per_second ) * 1000 /
+-                              bytes_per_second ) );
++    internal->total_time = ((dec->remaining == (Uint32)-1) || (bytes_per_second == 0)) ? (-1) :
++                           (Sint32) (((Sint64) dec->remaining * 1000) / bytes_per_second);
+ 
+     sample->flags = SOUND_SAMPLEFLAG_CANSEEK;
+     dec->total = dec->remaining;
