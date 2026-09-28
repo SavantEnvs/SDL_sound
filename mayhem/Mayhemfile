@@ -1,0 +1,11 @@
+# origin: https://app.mayhem.security/mayhemheroes/sdl-sound/sdl-sound-fuzzer/49
+project: savantenvs/sdl-sound
+target: sdl-sound-fuzzer-buggy-mhh-run-49
+
+cmds:
+  - cmd: /mayhem/fuzz_samplefrommem
+    max_length: 200000
+    libfuzzer: true
+
+testsuite:
+  - https://$MAYHEM_DOMAIN/$MAYHEM_PROJECT/$MAYHEM_TARGET/testsuite.tar
