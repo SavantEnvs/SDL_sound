@@ -1,0 +1,17 @@
+project: savantenvs/sdl-sound
+target: sdl-sound-fuzzer-buggy-mhh-run-9
+
+cmds:
+  - cmd: /mayhem/fuzz_samplefrommem
+    max_length: 200000
+    libfuzzer: true
+    # SDL's audio subsystem, probed by Sound_Init(), leaks 159 bytes in libasound at exit on a real
+    # backend; LeakSanitizer then turns every input into a crash. The harness only decodes, so a null
+    # device changes nothing it tests. test.sh and sdlsound_selftest.c already run this way.
+    env:
+      SDL_AUDIODRIVER: dummy
+
+testsuite:
+  - https://$MAYHEM_DOMAIN/$MAYHEM_PROJECT/$MAYHEM_TARGET/testsuite.tar
+
+# origin: https://app.mayhem.security/mayhemheroes/sdl-sound/sdl-sound-fuzzer/9
